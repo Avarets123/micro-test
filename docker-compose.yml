@@ -1,0 +1,45 @@
+---
+services:
+  db_micr:
+    container_name: db_micr
+    image: postgres:12
+    restart: always
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - ./var/pgdata:/var/lib/postgresql/data
+    ports:
+      - ${POSTGRES_PORT}:5432/tcp
+
+  # auth_micr:
+  #   container_name: api_micr
+  #   build:
+  #     context: ./auth
+  #   env_file:
+  #     - .env
+  #   environment:
+  #     NODE_ENV: ${NODE_ENV}
+  #     DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database:${POSTGRES_PORT}/${POSTGRES_DB}?schema=public
+  #     BACKEND_CORE_PORT: ${BACKEND_CORE_PORT}
+  #   ports:
+  #     - ${BACKEND_CORE_PORT}:3000
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - database
+  #     - rabbitMQ
+
+
+  rmq_micr:
+    container_name: rmq_micr
+    image: rabbitmq:3-management
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RMQ_PASSWORD}
+    ports:
+      - ${RMQ_PORT}:5672
+      - ${RMQ_MANAGER_PORT}:15672
