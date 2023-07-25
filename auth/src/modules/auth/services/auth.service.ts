@@ -1,9 +1,9 @@
 import { PrismaService } from '@infrastructure/database/prisma.service'
 import { BadRequestException, Injectable } from '@nestjs/common'
-import { UserRegisterContract } from '../../../../../contracts/auth/user.register.contract'
-import { UserLoginContract } from '../../../../../contracts/auth/user.login.contract'
 import { compare, hash } from 'bcrypt'
 import { JwtService } from '@nestjs/jwt'
+import { UserLoginContract } from 'src/contracts/auth/user.login.contract'
+import { UserRegisterContract } from 'src/contracts/auth/user.register.contract'
 
 @Injectable()
 export class AuthService {
@@ -21,7 +21,7 @@ export class AuthService {
 
     const password = await hash(rawPassword, 9)
 
-    return this.prisma.user.create({
+    return await this.prisma.user.create({
       data: {
         email,
         password,
@@ -52,14 +52,12 @@ export class AuthService {
   }
 
   private async checkEmail(email: string) {
-    await this.prisma.user
-      .findFirstOrThrow({
-        where: {
-          email,
-        },
-      })
-      .catch(() => {
-        throw new BadRequestException(`User by email: ${email} exists`)
-      })
+    const hasUser = await this.prisma.user.findFirst({
+      where: {
+        email,
+      },
+    })
+
+    if (hasUser) throw new BadRequestException(`User by email: ${email} exists`)
   }
 }

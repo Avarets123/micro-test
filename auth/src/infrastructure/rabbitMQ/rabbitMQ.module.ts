@@ -14,9 +14,11 @@ const password = getEnv('RMQ_PASSWORD') || 'password'
 const host = getEnv('RMQ_HOST') || 'localhost:6666'
 const uri = `amqp://${user}:${password}@${host}`
 
+export const ROOT_EXCHANGE = 'root_exchange'
+
 const RMQ_EXCHANGES: RabbitMQExchangeConfig[] = [
   {
-    name: 'root_exchange',
+    name: ROOT_EXCHANGE,
     type: 'direct',
     options: {
       durable: true,
