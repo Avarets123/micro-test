@@ -1,13 +1,14 @@
 import { Body, Controller, Get, Post } from '@nestjs/common'
 import { RMQService } from './infrastructure/rabbitMQ/rabbitPublish.service'
-import { UserRegisterContract } from '../../contracts/auth/user.register.contract'
-import { UserLoginContract } from '../../contracts/auth/user.login.contract'
-import { UsersFindContract } from '../../contracts/others/users.find.contract'
 import { ROOT_EXCHANGE } from '@infrastructure/rabbitMQ/rabbitMQ.module'
+import { UserLoginContract } from './contracts/auth/user.login.contract'
+import { UserRegisterContract } from './contracts/auth/user.register.contract'
+import { UsersFindContract } from './contracts/others/users.find.contract'
 
 @Controller()
 export class AppController {
   constructor(private readonly rmqService: RMQService) {}
+
   @Post('auth/register')
   async register(@Body() body: UserRegisterContract.Request) {
     return await this.rmqService.request<

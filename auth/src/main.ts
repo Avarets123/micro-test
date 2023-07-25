@@ -7,14 +7,11 @@ import { getEnv } from '@infrastructure/rabbitMQ/rabbitMQ.module'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
-  app.enableCors()
-  exceptionBoot(app)
-  validationBoot(app)
 
   const PORT = getEnv('AUTH_SEVICE_PORT') || 3010
 
-  await app.listen(PORT, () =>
-    console.log('Auth service has ben started on port ' + PORT),
+  await app.init(() =>
+    console.log('Auth service has ben inited on port ' + PORT),
   )
 }
 bootstrap()
