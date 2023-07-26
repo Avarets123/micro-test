@@ -9,7 +9,6 @@ COPY package*.json ./
 RUN npm ci
 
 COPY --chown=node:node . .
-RUN npm run prisma:generate
 RUN npm run build \
     && npm prune --production
 
@@ -26,7 +25,6 @@ WORKDIR /usr/src/app
 COPY --from=builder --chown=node:node /usr/src/app/package*.json ./
 COPY --from=builder --chown=node:node /usr/src/app/node_modules/ ./node_modules/
 COPY --from=builder --chown=node:node /usr/src/app/dist/ ./dist/
-COPY --from=builder --chown=node:node /usr/src/app/src/infrastructure/database/prisma/ ./src/infrastructure/database/prisma/
 
 
 CMD ["npm", "run", "start:prod"]
