@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
 import { AuthService } from './auth.service'
 import { UserService } from './user.service'
 import { UserLoginContract } from 'src/contracts/auth/user.login.contract'
@@ -22,10 +22,19 @@ export class AuthRmqService {
   })
   async register(body: UserRegisterContract.Request) {
     try {
-      const res = await this.authService.register(body)
-      return res
+      return await this.authService.register(body)
     } catch (error) {
       console.log(error)
+
+      const { message, status } = error
+
+      return new HttpException(
+        {
+          message,
+          status: status.status,
+        },
+        HttpStatus.BAD_REQUEST,
+      )
     }
   }
 
@@ -35,7 +44,21 @@ export class AuthRmqService {
     queue: QueuesEnum.USER_LOGIN,
   })
   async login(body: UserLoginContract.Request) {
-    return await this.authService.login(body)
+    try {
+      return await this.authService.login(body)
+    } catch (error) {
+      console.log(error)
+
+      const { message, status } = error
+
+      return new HttpException(
+        {
+          message,
+          status: status.status,
+        },
+        HttpStatus.BAD_REQUEST,
+      )
+    }
   }
 
   @RabbitRPC({
@@ -44,6 +67,20 @@ export class AuthRmqService {
     queue: QueuesEnum.USERS_FIND,
   })
   async findUsers() {
-    return await this.userService.findUsers()
+    try {
+      return await this.userService.findUsers()
+    } catch (error) {
+      console.log(error)
+
+      const { message, status } = error
+
+      return new HttpException(
+        {
+          message,
+          status: status.status,
+        },
+        HttpStatus.BAD_REQUEST,
+      )
+    }
   }
 }
