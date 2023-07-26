@@ -18,7 +18,7 @@ services:
   api_micr:
     container_name: api_micr
     build:
-      context: ./api
+      context: ../api
     env_file:
       - .env
     restart: unless-stopped
@@ -32,7 +32,7 @@ services:
   auth_micr:
     container_name: auth_micr
     build:
-      context: ./auth
+      context: ../auth
     env_file:
       - .env
     environment:
